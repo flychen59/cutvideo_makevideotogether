@@ -1,0 +1,73 @@
+from os import listdir
+import cv2
+import os
+import numpy as np
+
+def pinjie():
+    filePath ="F:\download\mae-main\GunnarFarneback"
+    filePath2='F:\download\mae-main\GunnarFarneback2'
+    img_array = []
+    test = os.listdir(filePath)
+    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+    out = cv2.VideoWriter('./output.avi', fourcc, 30.0, (2200, 3850))
+    # videowrite = cv2.VideoWriter(r'./test.mp4', -1, 30, (2200, 3850))
+    for i in test:
+        img_name = i.split(".")[0]
+        _2d_path = filePath+ '\\'+'{}'.format(img_name) + ".png"
+        # _3d_path = "./3D_Result/0001_v3/"+ img_name + ".jpg"
+        _qd_path = filePath2+ '\\'+'{}'.format(img_name)+ ".png"
+
+        _2d_img = cv2.imread(_2d_path)
+        # _3d_img = cv2.imread(_3d_path)
+        _qd_img = cv2.imread(_qd_path)
+
+        # _2d_img = _qd_img[:,1920:]
+        # _qd_img = _qd_img[:,450:1450]
+        # cv2.imshow('top', _top_img)
+        # cv2.waitKey(0)
+
+        img_last = np.zeros((1080, 3840, 3), np.uint8)
+        # 单幅图像尺寸
+        img_last[0:1080, 0:1920] = _2d_img
+        img_last[0:1080, 1920:3840] = _qd_img
+        # img_last[0:1080, 3028:4028] = _3d_img_small
+        # out.write(img_last)
+        # img_array.append(img_last)
+        # 创建空白长图
+        if not os.path.exists('video'):
+            os.mkdir('video')
+        cv2.imwrite("video"+'\\'+'{}'.format(img_name)+".png", img_last)
+    # out.release()
+
+import cv2
+import numpy as np
+import glob
+
+def makevideo():
+    img_array = []
+    file='video\\'
+    name_list=[]
+    for name in os.listdir(file):
+        name_list.append(name.split('.')[0])
+        name_list.sort(key=lambda x:int(x))
+    for filename in name_list:
+        img = cv2.imread(file+'{}'.format(filename)+'.png')
+        height, width, layers = img.shape
+        size = (width, height)
+        img_array.append(img)
+
+    out = cv2.VideoWriter('video_GF.avi', cv2.VideoWriter_fourcc(*'DIVX'), 10, size)
+
+    for i in range(len(img_array)):
+        out.write(img_array[i])
+    out.release()
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    # pinjie()
+    makevideo()
